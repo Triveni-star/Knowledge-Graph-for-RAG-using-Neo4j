@@ -44,13 +44,15 @@ class GraphRAG:
             input_variables=["schema", "question"],
             template= retrieval_qa_chat_prompt
         )
-        self.cypher_chain = GraphCypherQAChain.from_llm(
-            ChatOpenAI(temperature=0),
-            graph=graph,
-            verbose=True,
-            cypher_prompt=self.cypher_prompt,
+        self.cypher_chain = GraphCypherQAChain.from_llm(llm=self.llm, graph=self.graph, allow_dangerous_requests=True),
         )
 
     def generate_cypher_query(self, question: str) -> str:
         response = self.cypher_chain.run(question)
         return textwrap.fill(response, 60)
+        
+        self.cypher_chain = GraphCypherQAChain.from_llm(
+            ChatOpenAI(temperature=0),
+            graph=self.graph,
+            verbose=True,
+            cypher_prompt=self.cypher_prompt
